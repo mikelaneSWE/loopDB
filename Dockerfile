@@ -1,5 +1,5 @@
-# Use a Node.js image
-FROM node:14
+# Use a Node.js image based on Debian Bullseye (repositories available)
+FROM node:14-bullseye
 
 # Set environment variables
 ENV LANG=C.UTF-8 \
@@ -13,9 +13,15 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends postgresql postgresql-contrib && \
     rm -rf /var/lib/apt/lists/*
 
-# Configure PostgreSQL authentication
-RUN echo "host all all 0.0.0.0/0 md5" >> /etc/postgresql/11/main/pg_hba.conf && \
-    echo "listen_addresses='*'" >> /etc/postgresql/11/main/postgresql.conf
+# Configure PostgreSQL authentication (handle different Postgres package paths)
+RUN set -eux; \
+        for d in /etc/postgresql/*/main; do \
+            if [ -d "$d" ]; then \
+                echo "host all all 0.0.0.0/0 md5" >> "$d/pg_hba.conf"; \
+                echo "listen_addresses='*'" >> "$d/postgresql.conf"; \
+            fi; \
+        done; \
+        true
 
 # Start PostgreSQL, create the database, user, and decode and execute the Base64 SQL commands
 RUN service postgresql start && \
@@ -31,8 +37,13 @@ RUN service postgresql start && \
 WORKDIR /app
 COPY . .
 
+# Normalize Windows CRLF line endings to LF for shell scripts and test files (fixes /bin/sh parsing and mocha file names)
+RUN sed -i 's/\r$//' ./run_test.sh || true && \
+    sed -i 's/\r$//' ./test_database.js || true && \
+    chmod +x ./run_test.sh || true
+
 # Install Node.js dependencies
 RUN npm install
 
-# Run the test when the container starts
-CMD ["sh", "./run_test.sh"]
+# Run the test when the container starts (use bash to respect shebang and bash-specific options)
+CMD ["bash", "./run_test.sh"]

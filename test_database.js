@@ -37,19 +37,21 @@ describe('Database Test', function () {
     try {
       await client.query(`
         INSERT INTO users (
-          email,
-          username,
-          first_name,
-          last_name,
-          date_of_birth,
-          phone_number
+            email,
+            username,
+            password_hash,
+            first_name,
+            last_name,
+            date_of_birth,
+            phone_number
         ) VALUES (
           'test.user@example.com',
           'testuser123',
-          'Test',
-          'User',
-          '1990-01-15',
-          '+1-555-000-0000'
+            '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/HS.i77i',
+            'Test',
+            'User',
+            '1990-01-15',
+            '+1-555-000-0000'
         )`);
       
       // Query to verify the user was created
