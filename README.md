@@ -9,6 +9,9 @@ This is once again some of my code, and GitHub Copilot integrated with the base 
 But, for now, I included some cliff notes and thoughts witin the ReadMe file and Repo Landing Page.  
 Let me know if you have any questions or concerns, I can not wait to hear from you guys again!  Whatever it takes, I am ready, disciplined, and eager.
 
+Video Rundown :
+https://www.veed.io/view/6efed3d9-1e4e-4075-9037-d4b98123d11e?panel=share
+
 # Database Test Suite - User Tests
 
 ## Overview
